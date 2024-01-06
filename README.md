@@ -1,58 +1,69 @@
-# go_insure_v2
+# Go-Insure
 
-This starter full stack project has been generated using AlgoKit. See below for default getting started instructions.
+This is a decentralized insurance application built on **[Algorand](https://developer.algorand.org/)** blockchain technology using the **[Goracle](https://www.goracle.io/)** protocol. It aims to provide an alternative and transparent approach to traditional insurance by leveraging the benefits of decentralization and smart contracts.
 
-## Setup
+## Problems with Traditional Insurance
 
-### Initial setup
+Traditional insurance has several limitations and issues such as:
 
-1. Clone this repository locally.
-2. Install pre-requisites:
-   - Make sure to have [Docker](https://www.docker.com/) installed and running on your machine.
-   - Install `AlgoKit` - [Link](https://github.com/algorandfoundation/algokit-cli#install): The minimum required version is `1.3.0`. Ensure you can execute `algokit --version` and get `1.3.0` or later.
-   - Bootstrap your local environment; run `algokit bootstrap all` within this folder, which will install Poetry, run `npm install` and `poetry install` in the root directory to install NPM and Python packages respectively, set up a `.venv` folder with a Python virtual environment and also install all Python dependencies.
-     - For TypeScript projects, it will also run `npm install` to install NPM packages.
-     - For all projects, it will copy `.env.template` to `.env`.
-   - Run `algokit localnet start` to start a local Algorand network in Docker. If you are using VS Code launch configurations provided by the template, this will be done automatically for you.
-3. Open the project and start debugging / developing on:
-   - [Backend](backend/README.md) - Refer to the README for more information on how to work with smart contracts.
-   - [Frontend](frontend/README.md) - Refer to the README for more information on how to work with the frontend application.
+1. Lack of Transparency: Traditional insurance processes often lack transparency, making it challenging for policyholders to understand how premiums are calculated, claims are evaluated, and decisions are made.
+
+2. Slow Claim Processing: Traditional insurance claims often involve manual processes, leading to delays, and disputes between the insurer and the insured.
+
+3. Limited Access: Traditional insurance may exclude certain individuals or groups due to high premiums, bureaucracy, lack of coverage options for specific risks, or geographical restrictions.
+
+4. Trust Dependency: Traditional insurance relies on centralized entities, such as insurance companies, to administer policies, process claims, and handle funds. This centralized model can lead to issues of trust, potential conflicts of interest, and single points of failure.
+
+## Advantages of a Decentralized Solution
+
+A decentralized insurance solution offers several benefits:
+
+1. Transparency and Trustlessness: Decentralized insurance is built on blockchain technology, providing transparent and immutable records of policies, claims, and payouts. Smart contracts execute the predefined rules, ensuring transparency and reducing the need for trust in intermediaries.
+
+2. Automated Claim Processing: Claims in decentralized insurance are processed automatically based on the predefined conditions in smart contracts. This eliminates bureaucracy, reduces processing times, and minimizes the potential for disputes.
+
+3. Access for All: Decentralized insurance has the potential to provide coverage options for individuals or groups that are underserved by traditional insurance, offering more inclusive and affordable solutions.
+
+4. Enhanced Security: Blockchain technology provides robust security measures, reducing the risks of fraud, data manipulation, and unauthorized access to sensitive information.
+
+5. Elimination of Intermediaries: Decentralized insurance removes the need for traditional intermediaries, reducing costs, and increasing efficiency. This direct interaction between participants can result in lower premiums and faster payouts.
 
 
-### Subsequently
+## Go-Insure Features
 
-1. If you update to the latest source code and there are new dependencies, you will need to run `algokit bootstrap all` again.
-2. Follow step 3 above.
+- Policy Creation: Users can create insurance policies.
+- Policy Management: Users can view their active policies, track their coverage amounts, and monitor expiration dates.
+- Claim Submission: Users can submit insurance claims when covered events occur, following predefined conditions.
+- Claim Processing: Claims are automatically evaluated and processed based on the implemented smart contract logic.
+- Payouts: Approved claims result in automatic payout transfers to the insured parties.
 
-### Continuous Integration / Continuous Deployment (CI/CD)
 
-This project uses [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) to define CI/CD workflows, which are located in the [`.github/workflows`](./.github/workflows) folder. You can configure these actions to suit your project's needs, including CI checks, audits, linting, type checking, testing, and deployments to TestNet.
+## Installation
 
-For pushes to `main` branch, after the above checks pass, the following deployment actions are performed:
-  - The smart contract(s) are deployed to TestNet using [AlgoNode](https://algonode.io).
-  - The frontend application is deployed to a provider of your choice (Netlify, Vercel, etc.). See [frontend README](frontend/README.md) for more information.
+1. Clone this repository: `git clone https://github.com/0xBitzz/Go-Insurance`
 
-> Please note deployment of smart contracts is done via `algokit deploy` command which can be invoked both via CI as seen on this project, or locally. For more information on how to use `algokit deploy` please see [AlgoKit documentation](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/deploy.md).
+2. Install the necessary dependencies: `npm install`
 
-## Tools
 
-This project makes use of Python and React to build Algorand smart contracts and to provide a base project configuration to develop frontends for your Algorand dApps and interactions with smart contracts. The following tools are in use:
+## Usage
 
-- Algorand, AlgoKit, and AlgoKit Utils
-- Python dependencies including Poetry, Black, Ruff or Flake8, mypy, pytest, and pip-audit
-- React and related dependencies including AlgoKit Utils, Tailwind CSS, daisyUI, use-wallet, npm, jest, playwright, Prettier, ESLint, and Github Actions workflows for build validation
+1. Start the application: `npm start`
 
-### VS Code
+2. Access the application in your web browser at `http://localhost:3000`.
 
-It has also been configured to have a productive dev experience out of the box in [VS Code](https://code.visualstudio.com/), see the [backend .vscode](./backend/.vscode) and [frontend .vscode](./frontend/.vscode) folders for more details.
 
-## Integrating with smart contracts and application clients
+## Dependencies
 
-Refer to the [backend](backend/README.md) folder for overview of working with smart contracts, [frontend](frontend/README.md) for overview of the React project and the [frontend/contracts](frontend/src/contracts/README.md) folder for README on adding new smart contracts from backend as application clients on your frontend. The templates provided in these folders will help you get started.
-When you compile and generate smart contract artifacts, your frontend component will automatically generate typescript application clients from smart contract artifacts and move them to `frontend/src/contracts` folder, see [`generate:app-clients` in package.json](frontend/package.json). Afterwards, you are free to import and use them in your frontend application.
+- python: version 3.11.3
+- beaker-pyteal: version 1.0.1
+- py-algorand-sdk: version >=2.2.0, <3.0.0
+- beaker-ts: version ^0.0.95
+- algosdk: version 2.1.0
+- next-js: version 13.4.9
+- txnlab/use-wallet: version 2.0.0-alpha.5
 
-The frontend starter also provides an example of interactions with your GoInsureClient in [`AppCalls.tsx`](frontend/src/components/AppCalls.tsx) component by default.
 
-## Next Steps
+## License
 
-You can take this project and customize it to build your own decentralized applications on Algorand. Make sure to understand how to use AlgoKit and how to write smart contracts for Algorand before you start.
+This project is licensed under the MIT License.
+
