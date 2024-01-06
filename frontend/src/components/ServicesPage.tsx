@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState, useRef } from 'react'
-// import { LaunchVestClient } from '../contracts/launch_vest'
+import { GoInsureClient} from '../contracts/go_insure'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { useWallet } from '@txnlab/use-wallet'
@@ -11,34 +11,35 @@ const ServicesPage = () => {
   const [area, setArea] = useState<string>('')
   const [state, setState] = useState<string>('')
   const [country, setCountry] = useState<string>('')
+  const [appId, setAppId] = useState<number>(0)
 
-  //   const { enqueueSnackbar } = useSnackbar()
-  //   const { signer, activeAddress } = useWallet()
-  //   const algodConfig = getAlgodConfigFromViteEnvironment()
-  //   const algodClient = algokit.getAlgoClient({
-  //     server: algodConfig.server,
-  //     port: algodConfig.port,
-  //     token: algodConfig.token,
-  //   })
+    const { enqueueSnackbar } = useSnackbar()
+    const { signer, activeAddress } = useWallet()
+    const algodConfig = getAlgodConfigFromViteEnvironment()
+    const algodClient = algokit.getAlgoClient({
+      server: algodConfig.server,
+      port: algodConfig.port,
+      token: algodConfig.token,
+    })
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   const sender = { signer, addr: activeAddress! }
+    const sender = { signer, addr: activeAddress! }
 
-  //   const launchVestClient = new LaunchVestClient(
-  //     {
-  //       resolveBy: 'id',
-  //       id: appId,
-  //       sender,
-  //     },
-  //     algodClient,
-  //   )
+    const goInsureClient = new GoInsureClient(
+      {
+        resolveBy: 'id',
+        id: 0,
+        sender,
+      },
+      algodClient,
+    )
 
     const handleCreate = async () => {
-      await launchVestClient.create.bare()
-      const launchVestAppId = (await launchVestClient.appClient.getAppReference()).appId
-      setAppId(Number(launchVestAppId))
-      await launchVestClient.appClient.fundAppAccount(algokit.microAlgos(200_000))
-      await launchVestClient.bootstrap({ asset: USDC_ASSET_ID })
+      await goInsureClient.create.bare()
+      const goInsureClientAppId = (await goInsureClient.appClient.getAppReference()).appId
+      setAppId(Number(goInsureClientAppId))
+      await goInsureClient.appClient.fundAppAccount(algokit.microAlgos(200_000))
+      await goInsureClient.({ asset: USDC_ASSET_ID })
       console.log(launchVestAppId)
     }
 
@@ -145,7 +146,7 @@ const ServicesPage = () => {
   //   }
   return (
     <div className="max-w-[94%] md:max-w-[80%] xl:max-w-[60%] w-[100%] mx-auto bg-[#FFFFFF] text-[#737373] font-['Lato'] mt-20 mb-40">
-      <div className="capitalize text-4xl flex justify-center py-5">list token</div>
+      <div className="capitalize text-4xl flex justify-center py-5">purchase Policy</div>
       <div className="border-2 border-black-100 rounded-[50px] p-10 mb-10">
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="mb-5">
@@ -206,7 +207,7 @@ const ServicesPage = () => {
               e.preventDefault()
             }}
           >
-            submit
+            Purchase Policy
           </button>
         </form>
       </div>
