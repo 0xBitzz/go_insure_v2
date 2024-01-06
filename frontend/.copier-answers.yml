@@ -4,8 +4,10 @@ _src_path: gh:algorandfoundation/algokit-react-frontend-template
 algod_port: 4001
 algod_server: http://localhost
 algod_token: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-author_email: ''
-author_name: ''
+author_email: your@email.tld
+author_name: Dom Dom
+cloud_provider: netlify
+ide_jetbrains: false
 ide_vscode: true
 indexer_port: 8980
 indexer_server: http://localhost
