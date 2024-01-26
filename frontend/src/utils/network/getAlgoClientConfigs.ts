@@ -6,10 +6,14 @@ export function getAlgodConfigFromViteEnvironment(): AlgoViteClientConfig {
   }
 
   return {
-    server: import.meta.env.VITE_ALGOD_SERVER,
-    port: import.meta.env.VITE_ALGOD_PORT,
-    token: import.meta.env.VITE_ALGOD_TOKEN,
-    network: import.meta.env.VITE_ALGOD_NETWORK,
+    // server: import.meta.env.VITE_ALGOD_SERVER,
+    // port: import.meta.env.VITE_ALGOD_PORT,
+    // token: import.meta.env.VITE_ALGOD_TOKEN,
+    // network: import.meta.env.VITE_ALGOD_NETWORK,
+    server: 'https://testnet-api.algonode.cloud',
+    port: '',
+    token: '',
+    network: 'testnet',
   }
 }
 
