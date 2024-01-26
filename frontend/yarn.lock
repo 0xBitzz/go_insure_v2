@@ -1409,6 +1409,11 @@ algo-msgpack-with-bigint@^2.1.1:
   resolved "https://registry.yarnpkg.com/algo-msgpack-with-bigint/-/algo-msgpack-with-bigint-2.1.1.tgz#38bb717220525b3ff42232eefdcd9efb9ad405d6"
   integrity sha512-F1tGh056XczEaEAqu7s+hlZUDWwOBT70Eq0lfMpBP2YguSQVyxRbprLq5rELXKQOyOaixTWYhMeMQMzP0U5FoQ==
 
+algokit@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/algokit/-/algokit-0.0.1.tgz#a42deafa9495701f90c5fec98d227e42d237b00c"
+  integrity sha512-I6A3K3NSvA7BTcCgtHPnOXo4QQBXNf4Wt+gnwYhO+8D8AwbEP6Cf4FwqjTrB/a6rQXWzahzZ8vc0cyAN7m92HQ==
+
 algosdk@^2.5.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/algosdk/-/algosdk-2.7.0.tgz#6ebab130d25fc3cb4c74dce4d8753c7e86db1404"
