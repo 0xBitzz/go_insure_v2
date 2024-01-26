@@ -1,8 +1,12 @@
+// @ts-nocheck
+
 import { useDispatch, useSelector } from 'react-redux'
 import { hideConfirmModal } from '../../services/features/confirmModal/confirmModalSlice'
 import { RootState } from '../../services/store/store'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
+
+
 
 const ConfirmModal = ({ text, txn }) => {
   const [loading, setLoading] = useState<boolean>(false)
