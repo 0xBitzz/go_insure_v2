@@ -26,20 +26,97 @@ import { SendTransactionResult, TransactionToSign, SendTransactionFrom } from '@
 import { Algodv2, OnApplicationComplete, Transaction, TransactionWithSigner, AtomicTransactionComposer } from 'algosdk'
 export const APP_SPEC: AppSpec = {
   "hints": {
-    "hello(string)string": {
+    "bootstrap()void": {
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "purchase_policy(pay,string,string,string)void": {
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "approve_claim()void": {
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "reject_claim()void": {
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)": {
+      "structs": {
+        "output": {
+          "name": "Policy",
+          "elements": [
+            [
+              "customer_address",
+              "address"
+            ],
+            [
+              "premium_amount",
+              "uint64"
+            ],
+            [
+              "active_status",
+              "bool"
+            ],
+            [
+              "registration_date",
+              "uint64"
+            ],
+            [
+              "expiration_date",
+              "uint64"
+            ],
+            [
+              "claim_status",
+              "string"
+            ],
+            [
+              "amount_claimed",
+              "uint64"
+            ],
+            [
+              "area",
+              "string"
+            ],
+            [
+              "state",
+              "string"
+            ],
+            [
+              "country",
+              "string"
+            ]
+          ]
+        }
+      },
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "update_coverage_amount(uint64)void": {
+      "call_config": {
+        "no_op": "CALL"
+      }
+    },
+    "update_expiration_timeline(uint64)void": {
       "call_config": {
         "no_op": "CALL"
       }
     }
   },
   "source": {
-    "approval": "I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMQpieXRlY2Jsb2NrIDB4CnR4biBOdW1BcHBBcmdzCmludGNfMCAvLyAwCj09CmJueiBtYWluX2w0CnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4MDJiZWNlMTEgLy8gImhlbGxvKHN0cmluZylzdHJpbmciCj09CmJueiBtYWluX2wzCmVycgptYWluX2wzOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIGhlbGxvY2FzdGVyXzMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KYm56IG1haW5fbDEwCnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA0IC8vIFVwZGF0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2w5CnR4biBPbkNvbXBsZXRpb24KcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCj09CmJueiBtYWluX2w4CmVycgptYWluX2w4Ogp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQphc3NlcnQKY2FsbHN1YiBkZWxldGVfMQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sOToKdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KYXNzZXJ0CmNhbGxzdWIgdXBkYXRlXzAKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDEwOgp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAo9PQphc3NlcnQKaW50Y18xIC8vIDEKcmV0dXJuCgovLyB1cGRhdGUKdXBkYXRlXzA6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CnB1c2hpbnQgVE1QTF9VUERBVEFCTEUgLy8gVE1QTF9VUERBVEFCTEUKLy8gQ2hlY2sgYXBwIGlzIHVwZGF0YWJsZQphc3NlcnQKcmV0c3ViCgovLyBkZWxldGUKZGVsZXRlXzE6CnByb3RvIDAgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CnB1c2hpbnQgVE1QTF9ERUxFVEFCTEUgLy8gVE1QTF9ERUxFVEFCTEUKLy8gQ2hlY2sgYXBwIGlzIGRlbGV0YWJsZQphc3NlcnQKcmV0c3ViCgovLyBoZWxsbwpoZWxsb18yOgpwcm90byAxIDEKYnl0ZWNfMCAvLyAiIgpwdXNoYnl0ZXMgMHg0ODY1NmM2YzZmMmMyMCAvLyAiSGVsbG8sICIKZnJhbWVfZGlnIC0xCmV4dHJhY3QgMiAwCmNvbmNhdApmcmFtZV9idXJ5IDAKZnJhbWVfZGlnIDAKbGVuCml0b2IKZXh0cmFjdCA2IDAKZnJhbWVfZGlnIDAKY29uY2F0CmZyYW1lX2J1cnkgMApyZXRzdWIKCi8vIGhlbGxvX2Nhc3RlcgpoZWxsb2Nhc3Rlcl8zOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDEKY2FsbHN1YiBoZWxsb18yCmZyYW1lX2J1cnkgMApwdXNoYnl0ZXMgMHgxNTFmN2M3NSAvLyAweDE1MWY3Yzc1CmZyYW1lX2RpZyAwCmNvbmNhdApsb2cKcmV0c3Vi",
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDgKaW50Y2Jsb2NrIDAgMSA2NTUzNiAxMDAwMDAwIDUwMDAwMDAgMzIwCmJ5dGVjYmxvY2sgMHggMHg2OTZlNzM3NTcyNjU3MiAweDcwNmY2YzY5NjM3OTVmNjU3ODcwNjk3MjYxNzQ2OTZmNmU1ZjY0NjE3NDY1IDB4MDAgMHg2MzZmNzY2NTcyNjE2NzY1NWY2MTZkNmY3NTZlNzQgMHg1MDY1NmU2NDY5NmU2Nwp0eG4gTnVtQXBwQXJncwppbnRjXzAgLy8gMAo9PQpibnogbWFpbl9sMTYKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHhiZWM3NmQ4NyAvLyAiYm9vdHN0cmFwKCl2b2lkIgo9PQpibnogbWFpbl9sMTUKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHgyNDFmMDdhYSAvLyAicHVyY2hhc2VfcG9saWN5KHBheSxzdHJpbmcsc3RyaW5nLHN0cmluZyl2b2lkIgo9PQpibnogbWFpbl9sMTQKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg2YzZiYzdiNCAvLyAiYXBwcm92ZV9jbGFpbSgpdm9pZCIKPT0KYm56IG1haW5fbDEzCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4OWQ3NTA0MjUgLy8gInJlamVjdF9jbGFpbSgpdm9pZCIKPT0KYm56IG1haW5fbDEyCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4NDY1NjZkODMgLy8gImdldF9wb2xpY3koYWRkcmVzcykoYWRkcmVzcyx1aW50NjQsYm9vbCx1aW50NjQsdWludDY0LHN0cmluZyx1aW50NjQsc3RyaW5nLHN0cmluZyxzdHJpbmcpIgo9PQpibnogbWFpbl9sMTEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMApwdXNoYnl0ZXMgMHg2OWJkY2Q4NCAvLyAidXBkYXRlX2NvdmVyYWdlX2Ftb3VudCh1aW50NjQpdm9pZCIKPT0KYm56IG1haW5fbDEwCnR4bmEgQXBwbGljYXRpb25BcmdzIDAKcHVzaGJ5dGVzIDB4YWVkNWQwZDYgLy8gInVwZGF0ZV9leHBpcmF0aW9uX3RpbWVsaW5lKHVpbnQ2NCl2b2lkIgo9PQpibnogbWFpbl9sOQplcnIKbWFpbl9sOToKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiB1cGRhdGVleHBpcmF0aW9udGltZWxpbmVjYXN0ZXJfMTMKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDEwOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHVwZGF0ZWNvdmVyYWdlYW1vdW50Y2FzdGVyXzEyCmludGNfMSAvLyAxCnJldHVybgptYWluX2wxMToKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBnZXRwb2xpY3ljYXN0ZXJfMTEKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDEyOgp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCiE9CiYmCmFzc2VydApjYWxsc3ViIHJlamVjdGNsYWltY2FzdGVyXzEwCmludGNfMSAvLyAxCnJldHVybgptYWluX2wxMzoKdHhuIE9uQ29tcGxldGlvbgppbnRjXzAgLy8gTm9PcAo9PQp0eG4gQXBwbGljYXRpb25JRAppbnRjXzAgLy8gMAohPQomJgphc3NlcnQKY2FsbHN1YiBhcHByb3ZlY2xhaW1jYXN0ZXJfOQppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTQ6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgcHVyY2hhc2Vwb2xpY3ljYXN0ZXJfOAppbnRjXzEgLy8gMQpyZXR1cm4KbWFpbl9sMTU6CnR4biBPbkNvbXBsZXRpb24KaW50Y18wIC8vIE5vT3AKPT0KdHhuIEFwcGxpY2F0aW9uSUQKaW50Y18wIC8vIDAKIT0KJiYKYXNzZXJ0CmNhbGxzdWIgYm9vdHN0cmFwY2FzdGVyXzcKaW50Y18xIC8vIDEKcmV0dXJuCm1haW5fbDE2Ogp0eG4gT25Db21wbGV0aW9uCmludGNfMCAvLyBOb09wCj09CmJueiBtYWluX2wxOAplcnIKbWFpbl9sMTg6CnR4biBBcHBsaWNhdGlvbklECmludGNfMCAvLyAwCj09CmFzc2VydAppbnRjXzEgLy8gMQpyZXR1cm4KCi8vIGJvb3RzdHJhcApib290c3RyYXBfMDoKcHJvdG8gMCAwCmJ5dGVjIDQgLy8gImNvdmVyYWdlX2Ftb3VudCIKaW50YyA0IC8vIDUwMDAwMDAKYXBwX2dsb2JhbF9wdXQKYnl0ZWNfMSAvLyAiaW5zdXJlciIKYnl0ZWNfMCAvLyAiIgphcHBfZ2xvYmFsX3B1dApieXRlY18yIC8vICJwb2xpY3lfZXhwaXJhdGlvbl9kYXRlIgpwdXNoaW50IDMxNTM2MDAwIC8vIDMxNTM2MDAwCmFwcF9nbG9iYWxfcHV0CmJ5dGVjXzEgLy8gImluc3VyZXIiCmdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCmFwcF9nbG9iYWxfcHV0CnJldHN1YgoKLy8gcHVyY2hhc2VfcG9saWN5CnB1cmNoYXNlcG9saWN5XzE6CnByb3RvIDQgMApieXRlY18wIC8vICIiCmludGNfMCAvLyAwCmR1cG4gMwpieXRlY18wIC8vICIiCmludGNfMCAvLyAwCmJ5dGVjXzAgLy8gIiIKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKZHVwCmZyYW1lX2RpZyAtMwpleHRyYWN0IDIgMApieXRlY18wIC8vICIiCiE9Ci8vIEludmFsaWQgYXJlYSwgc3RhdGUgb3IgY291bnRyeQphc3NlcnQKZnJhbWVfZGlnIC0yCmV4dHJhY3QgMiAwCmJ5dGVjXzAgLy8gIiIKIT0KLy8gSW52YWxpZCBhcmVhLCBzdGF0ZSBvciBjb3VudHJ5CmFzc2VydApmcmFtZV9kaWcgLTEKZXh0cmFjdCAyIDAKYnl0ZWNfMCAvLyAiIgohPQovLyBJbnZhbGlkIGFyZWEsIHN0YXRlIG9yIGNvdW50cnkKYXNzZXJ0CmZyYW1lX2RpZyAtNApndHhucyBTZW5kZXIKdHhuIFNlbmRlcgo9PQovLyBTZW5kZXIgbWlzbWF0Y2gKYXNzZXJ0Cmdsb2JhbCBHcm91cFNpemUKcHVzaGludCAyIC8vIDIKPT0KLy8gR3JvdXAgc2l6ZSBub3QgMgphc3NlcnQKdHhuIFNlbmRlcgpiYWxhbmNlCmludGNfMyAvLyAxMDAwMDAwCj49Ci8vIFNlbmRlciBiYWxhbmNlIGlzIGxvd2VyIHRoYW4gUHJlbWl1bQphc3NlcnQKZnJhbWVfZGlnIC00Cmd0eG5zIFR5cGVFbnVtCmludGNfMSAvLyBwYXkKPT0KLy8gSW52YWxpZCB0eG4gdHlwZSwgYW1vdW50IG9yIHJlY2VpdmVyLgphc3NlcnQKZnJhbWVfZGlnIC00Cmd0eG5zIEFtb3VudAppbnRjXzMgLy8gMTAwMDAwMAo9PQovLyBJbnZhbGlkIHR4biB0eXBlLCBhbW91bnQgb3IgcmVjZWl2ZXIuCmFzc2VydApmcmFtZV9kaWcgLTQKZ3R4bnMgUmVjZWl2ZXIKYnl0ZWNfMSAvLyAiaW5zdXJlciIKYXBwX2dsb2JhbF9nZXQKPT0KLy8gSW52YWxpZCB0eG4gdHlwZSwgYW1vdW50IG9yIHJlY2VpdmVyLgphc3NlcnQKdHhuIFNlbmRlcgpmcmFtZV9idXJ5IDAKZnJhbWVfZGlnIDAKbGVuCnB1c2hpbnQgMzIgLy8gMzIKPT0KYXNzZXJ0CmludGNfMyAvLyAxMDAwMDAwCmZyYW1lX2J1cnkgMQppbnRjXzEgLy8gMQohCiEKZnJhbWVfYnVyeSAyCmdsb2JhbCBMYXRlc3RUaW1lc3RhbXAKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAzCmJ5dGVjXzIgLy8gInBvbGljeV9leHBpcmF0aW9uX2RhdGUiCmFwcF9nbG9iYWxfZ2V0CisKZnJhbWVfYnVyeSA0CmJ5dGVjIDUgLy8gIlBlbmRpbmciCmZyYW1lX2J1cnkgNQpmcmFtZV9kaWcgNQpsZW4KaXRvYgpleHRyYWN0IDYgMApmcmFtZV9kaWcgNQpjb25jYXQKZnJhbWVfYnVyeSA1CmludGNfMCAvLyAwCmZyYW1lX2J1cnkgNgpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMQppdG9iCmNvbmNhdApieXRlY18zIC8vIDB4MDAKaW50Y18wIC8vIDAKZnJhbWVfZGlnIDIKc2V0Yml0CmNvbmNhdApmcmFtZV9kaWcgMwppdG9iCmNvbmNhdApmcmFtZV9kaWcgNAppdG9iCmNvbmNhdApmcmFtZV9kaWcgNQpmcmFtZV9idXJ5IDExCmZyYW1lX2RpZyAxMQpmcmFtZV9idXJ5IDEwCnB1c2hpbnQgNzMgLy8gNzMKZnJhbWVfYnVyeSA4CmZyYW1lX2RpZyA4CmZyYW1lX2RpZyAxMQpsZW4KKwpmcmFtZV9idXJ5IDkKZnJhbWVfZGlnIDkKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyA4Cml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyA2Cml0b2IKY29uY2F0CmZyYW1lX2RpZyAtMwpmcmFtZV9idXJ5IDExCmZyYW1lX2RpZyAxMApmcmFtZV9kaWcgMTEKY29uY2F0CmZyYW1lX2J1cnkgMTAKZnJhbWVfZGlnIDkKZnJhbWVfYnVyeSA4CmZyYW1lX2RpZyA4CmZyYW1lX2RpZyAxMQpsZW4KKwpmcmFtZV9idXJ5IDkKZnJhbWVfZGlnIDkKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyA4Cml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyAtMgpmcmFtZV9idXJ5IDExCmZyYW1lX2RpZyAxMApmcmFtZV9kaWcgMTEKY29uY2F0CmZyYW1lX2J1cnkgMTAKZnJhbWVfZGlnIDkKZnJhbWVfYnVyeSA4CmZyYW1lX2RpZyA4CmZyYW1lX2RpZyAxMQpsZW4KKwpmcmFtZV9idXJ5IDkKZnJhbWVfZGlnIDkKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyA4Cml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyAtMQpmcmFtZV9idXJ5IDExCmZyYW1lX2RpZyAxMApmcmFtZV9kaWcgMTEKY29uY2F0CmZyYW1lX2J1cnkgMTAKZnJhbWVfZGlnIDkKZnJhbWVfYnVyeSA4CmZyYW1lX2RpZyA4Cml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyAxMApjb25jYXQKZnJhbWVfYnVyeSA3CnR4biBTZW5kZXIKYm94X2RlbApwb3AKdHhuIFNlbmRlcgpmcmFtZV9kaWcgNwpib3hfcHV0CnJldHN1YgoKLy8gYXBwcm92ZV9jbGFpbQphcHByb3ZlY2xhaW1fMjoKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCmludGNfMCAvLyAwCmR1cG4gMwpieXRlY18wIC8vICIiCmR1cG4gNAppbnRjXzAgLy8gMApkdXBuIDIKYnl0ZWNfMCAvLyAiIgpkdXAKdHhuIFNlbmRlcgpib3hfZ2V0CnN0b3JlIDEKc3RvcmUgMApsb2FkIDEKYXNzZXJ0CmxvYWQgMApmcmFtZV9idXJ5IDAKZnJhbWVfZGlnIDAKZXh0cmFjdCAwIDMyCmZyYW1lX2J1cnkgMQpmcmFtZV9kaWcgMApwdXNoaW50IDMyIC8vIDMyCmV4dHJhY3RfdWludDY0CmZyYW1lX2J1cnkgMgpmcmFtZV9kaWcgMAppbnRjIDUgLy8gMzIwCmdldGJpdApmcmFtZV9idXJ5IDMKZnJhbWVfZGlnIDAKcHVzaGludCA0MSAvLyA0MQpleHRyYWN0X3VpbnQ2NApmcmFtZV9idXJ5IDQKZnJhbWVfZGlnIDAKcHVzaGludCA0OSAvLyA0OQpleHRyYWN0X3VpbnQ2NApmcmFtZV9idXJ5IDUKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDAKcHVzaGludCA1NyAvLyA1NwpleHRyYWN0X3VpbnQxNgpmcmFtZV9kaWcgMApwdXNoaW50IDY3IC8vIDY3CmV4dHJhY3RfdWludDE2CnN1YnN0cmluZzMKZnJhbWVfYnVyeSA2CmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAwCnB1c2hpbnQgNjcgLy8gNjcKZXh0cmFjdF91aW50MTYKZnJhbWVfZGlnIDAKcHVzaGludCA2OSAvLyA2OQpleHRyYWN0X3VpbnQxNgpzdWJzdHJpbmczCmZyYW1lX2J1cnkgNwpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMApwdXNoaW50IDY5IC8vIDY5CmV4dHJhY3RfdWludDE2CmZyYW1lX2RpZyAwCnB1c2hpbnQgNzEgLy8gNzEKZXh0cmFjdF91aW50MTYKc3Vic3RyaW5nMwpmcmFtZV9idXJ5IDgKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDAKcHVzaGludCA3MSAvLyA3MQpleHRyYWN0X3VpbnQxNgpkaWcgMQpsZW4Kc3Vic3RyaW5nMwpmcmFtZV9idXJ5IDkKZnJhbWVfZGlnIDEKdHhuIFNlbmRlcgo9PQphc3NlcnQKZnJhbWVfZGlnIDIKaW50Y18zIC8vIDEwMDAwMDAKPT0KYXNzZXJ0CmZyYW1lX2RpZyAzCmludGNfMSAvLyAxCj09CmFzc2VydApmcmFtZV9kaWcgNgpleHRyYWN0IDIgMApieXRlYyA1IC8vICJQZW5kaW5nIgo9PQphc3NlcnQKaXR4bl9iZWdpbgppbnRjXzEgLy8gcGF5Cml0eG5fZmllbGQgVHlwZUVudW0KZnJhbWVfZGlnIDEKaXR4bl9maWVsZCBSZWNlaXZlcgppbnRjIDQgLy8gNTAwMDAwMAppdHhuX2ZpZWxkIEFtb3VudAppdHhuX3N1Ym1pdApwdXNoYnl0ZXMgMHg0MTcwNzA3MjZmNzY2NTY0IC8vICJBcHByb3ZlZCIKZnJhbWVfYnVyeSAxMApmcmFtZV9kaWcgMTAKbGVuCml0b2IKZXh0cmFjdCA2IDAKZnJhbWVfZGlnIDEwCmNvbmNhdApmcmFtZV9idXJ5IDEwCmludGMgNCAvLyA1MDAwMDAwCmZyYW1lX2J1cnkgMTEKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKaXRvYgpjb25jYXQKYnl0ZWNfMyAvLyAweDAwCmludGNfMCAvLyAwCmZyYW1lX2RpZyAzCnNldGJpdApjb25jYXQKZnJhbWVfZGlnIDQKaXRvYgpjb25jYXQKZnJhbWVfZGlnIDUKaXRvYgpjb25jYXQKZnJhbWVfZGlnIDEwCmZyYW1lX2J1cnkgMTUKZnJhbWVfZGlnIDE1CmZyYW1lX2J1cnkgMTQKcHVzaGludCA3MyAvLyA3MwpmcmFtZV9idXJ5IDEyCmZyYW1lX2RpZyAxMgpmcmFtZV9kaWcgMTUKbGVuCisKZnJhbWVfYnVyeSAxMwpmcmFtZV9kaWcgMTMKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyAxMgppdG9iCmV4dHJhY3QgNiAwCmNvbmNhdApmcmFtZV9kaWcgMTEKaXRvYgpjb25jYXQKZnJhbWVfZGlnIDcKZnJhbWVfYnVyeSAxNQpmcmFtZV9kaWcgMTQKZnJhbWVfZGlnIDE1CmNvbmNhdApmcmFtZV9idXJ5IDE0CmZyYW1lX2RpZyAxMwpmcmFtZV9idXJ5IDEyCmZyYW1lX2RpZyAxMgpmcmFtZV9kaWcgMTUKbGVuCisKZnJhbWVfYnVyeSAxMwpmcmFtZV9kaWcgMTMKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyAxMgppdG9iCmV4dHJhY3QgNiAwCmNvbmNhdApmcmFtZV9kaWcgOApmcmFtZV9idXJ5IDE1CmZyYW1lX2RpZyAxNApmcmFtZV9kaWcgMTUKY29uY2F0CmZyYW1lX2J1cnkgMTQKZnJhbWVfZGlnIDEzCmZyYW1lX2J1cnkgMTIKZnJhbWVfZGlnIDEyCmZyYW1lX2RpZyAxNQpsZW4KKwpmcmFtZV9idXJ5IDEzCmZyYW1lX2RpZyAxMwppbnRjXzIgLy8gNjU1MzYKPAphc3NlcnQKZnJhbWVfZGlnIDEyCml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyA5CmZyYW1lX2J1cnkgMTUKZnJhbWVfZGlnIDE0CmZyYW1lX2RpZyAxNQpjb25jYXQKZnJhbWVfYnVyeSAxNApmcmFtZV9kaWcgMTMKZnJhbWVfYnVyeSAxMgpmcmFtZV9kaWcgMTIKaXRvYgpleHRyYWN0IDYgMApjb25jYXQKZnJhbWVfZGlnIDE0CmNvbmNhdApmcmFtZV9idXJ5IDAKZnJhbWVfZGlnIDEKYm94X2RlbApwb3AKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDAKYm94X3B1dApyZXRzdWIKCi8vIHJlamVjdF9jbGFpbQpyZWplY3RjbGFpbV8zOgpwcm90byAwIDAKYnl0ZWNfMCAvLyAiIgpkdXAKaW50Y18wIC8vIDAKZHVwbiAzCmJ5dGVjXzAgLy8gIiIKaW50Y18wIC8vIDAKYnl0ZWNfMCAvLyAiIgpkdXBuIDMKaW50Y18wIC8vIDAKZHVwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4biBTZW5kZXIKYm94X2dldApzdG9yZSAzCnN0b3JlIDIKbG9hZCAzCmFzc2VydApsb2FkIDIKZnJhbWVfYnVyeSAwCmZyYW1lX2RpZyAwCmV4dHJhY3QgMCAzMgpmcmFtZV9idXJ5IDEKZnJhbWVfZGlnIDEKdHhuIFNlbmRlcgo9PQphc3NlcnQKZnJhbWVfZGlnIDAKcHVzaGludCAzMiAvLyAzMgpleHRyYWN0X3VpbnQ2NApmcmFtZV9idXJ5IDIKZnJhbWVfZGlnIDAKaW50YyA1IC8vIDMyMApnZXRiaXQKZnJhbWVfYnVyeSAzCmZyYW1lX2RpZyAwCnB1c2hpbnQgNDEgLy8gNDEKZXh0cmFjdF91aW50NjQKZnJhbWVfYnVyeSA0CmZyYW1lX2RpZyAwCnB1c2hpbnQgNDkgLy8gNDkKZXh0cmFjdF91aW50NjQKZnJhbWVfYnVyeSA1CnB1c2hieXRlcyAweDUyNjU2YTY1NjM3NDY1NjQgLy8gIlJlamVjdGVkIgpmcmFtZV9idXJ5IDYKZnJhbWVfZGlnIDYKbGVuCml0b2IKZXh0cmFjdCA2IDAKZnJhbWVfZGlnIDYKY29uY2F0CmZyYW1lX2J1cnkgNgpmcmFtZV9kaWcgMApwdXNoaW50IDU5IC8vIDU5CmV4dHJhY3RfdWludDY0CmZyYW1lX2J1cnkgNwpmcmFtZV9kaWcgMApmcmFtZV9kaWcgMApwdXNoaW50IDY3IC8vIDY3CmV4dHJhY3RfdWludDE2CmZyYW1lX2RpZyAwCnB1c2hpbnQgNjkgLy8gNjkKZXh0cmFjdF91aW50MTYKc3Vic3RyaW5nMwpmcmFtZV9idXJ5IDgKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDAKcHVzaGludCA2OSAvLyA2OQpleHRyYWN0X3VpbnQxNgpmcmFtZV9kaWcgMApwdXNoaW50IDcxIC8vIDcxCmV4dHJhY3RfdWludDE2CnN1YnN0cmluZzMKZnJhbWVfYnVyeSA5CmZyYW1lX2RpZyAwCmZyYW1lX2RpZyAwCnB1c2hpbnQgNzEgLy8gNzEKZXh0cmFjdF91aW50MTYKZGlnIDEKbGVuCnN1YnN0cmluZzMKZnJhbWVfYnVyeSAxMApmcmFtZV9kaWcgMQpmcmFtZV9kaWcgMgppdG9iCmNvbmNhdApieXRlY18zIC8vIDB4MDAKaW50Y18wIC8vIDAKZnJhbWVfZGlnIDMKc2V0Yml0CmNvbmNhdApmcmFtZV9kaWcgNAppdG9iCmNvbmNhdApmcmFtZV9kaWcgNQppdG9iCmNvbmNhdApmcmFtZV9kaWcgNgpmcmFtZV9idXJ5IDE1CmZyYW1lX2RpZyAxNQpmcmFtZV9idXJ5IDE0CnB1c2hpbnQgNzMgLy8gNzMKZnJhbWVfYnVyeSAxMgpmcmFtZV9kaWcgMTIKZnJhbWVfZGlnIDE1CmxlbgorCmZyYW1lX2J1cnkgMTMKZnJhbWVfZGlnIDEzCmludGNfMiAvLyA2NTUzNgo8CmFzc2VydApmcmFtZV9kaWcgMTIKaXRvYgpleHRyYWN0IDYgMApjb25jYXQKZnJhbWVfZGlnIDcKaXRvYgpjb25jYXQKZnJhbWVfZGlnIDgKZnJhbWVfYnVyeSAxNQpmcmFtZV9kaWcgMTQKZnJhbWVfZGlnIDE1CmNvbmNhdApmcmFtZV9idXJ5IDE0CmZyYW1lX2RpZyAxMwpmcmFtZV9idXJ5IDEyCmZyYW1lX2RpZyAxMgpmcmFtZV9kaWcgMTUKbGVuCisKZnJhbWVfYnVyeSAxMwpmcmFtZV9kaWcgMTMKaW50Y18yIC8vIDY1NTM2CjwKYXNzZXJ0CmZyYW1lX2RpZyAxMgppdG9iCmV4dHJhY3QgNiAwCmNvbmNhdApmcmFtZV9kaWcgOQpmcmFtZV9idXJ5IDE1CmZyYW1lX2RpZyAxNApmcmFtZV9kaWcgMTUKY29uY2F0CmZyYW1lX2J1cnkgMTQKZnJhbWVfZGlnIDEzCmZyYW1lX2J1cnkgMTIKZnJhbWVfZGlnIDEyCmZyYW1lX2RpZyAxNQpsZW4KKwpmcmFtZV9idXJ5IDEzCmZyYW1lX2RpZyAxMwppbnRjXzIgLy8gNjU1MzYKPAphc3NlcnQKZnJhbWVfZGlnIDEyCml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyAxMApmcmFtZV9idXJ5IDE1CmZyYW1lX2RpZyAxNApmcmFtZV9kaWcgMTUKY29uY2F0CmZyYW1lX2J1cnkgMTQKZnJhbWVfZGlnIDEzCmZyYW1lX2J1cnkgMTIKZnJhbWVfZGlnIDEyCml0b2IKZXh0cmFjdCA2IDAKY29uY2F0CmZyYW1lX2RpZyAxNApjb25jYXQKZnJhbWVfYnVyeSAxMQpmcmFtZV9kaWcgMQpib3hfZGVsCnBvcApmcmFtZV9kaWcgMQpmcmFtZV9kaWcgMTEKYm94X3B1dApyZXRzdWIKCi8vIGdldF9wb2xpY3kKZ2V0cG9saWN5XzQ6CnByb3RvIDEgMQpieXRlY18wIC8vICIiCmZyYW1lX2RpZyAtMQpib3hfZ2V0CnN0b3JlIDUKc3RvcmUgNApsb2FkIDUKYXNzZXJ0CmxvYWQgNApmcmFtZV9idXJ5IDAKcmV0c3ViCgovLyB1cGRhdGVfY292ZXJhZ2VfYW1vdW50CnVwZGF0ZWNvdmVyYWdlYW1vdW50XzU6CnByb3RvIDEgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmJ5dGVjIDQgLy8gImNvdmVyYWdlX2Ftb3VudCIKZnJhbWVfZGlnIC0xCmFwcF9nbG9iYWxfcHV0CnJldHN1YgoKLy8gdXBkYXRlX2V4cGlyYXRpb25fdGltZWxpbmUKdXBkYXRlZXhwaXJhdGlvbnRpbWVsaW5lXzY6CnByb3RvIDEgMAp0eG4gU2VuZGVyCmdsb2JhbCBDcmVhdG9yQWRkcmVzcwo9PQovLyB1bmF1dGhvcml6ZWQKYXNzZXJ0CmJ5dGVjXzIgLy8gInBvbGljeV9leHBpcmF0aW9uX2RhdGUiCmZyYW1lX2RpZyAtMQphcHBfZ2xvYmFsX3B1dApyZXRzdWIKCi8vIGJvb3RzdHJhcF9jYXN0ZXIKYm9vdHN0cmFwY2FzdGVyXzc6CnByb3RvIDAgMApjYWxsc3ViIGJvb3RzdHJhcF8wCnJldHN1YgoKLy8gcHVyY2hhc2VfcG9saWN5X2Nhc3RlcgpwdXJjaGFzZXBvbGljeWNhc3Rlcl84Ogpwcm90byAwIDAKaW50Y18wIC8vIDAKYnl0ZWNfMCAvLyAiIgpkdXBuIDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpmcmFtZV9idXJ5IDEKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgpmcmFtZV9idXJ5IDIKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwpmcmFtZV9idXJ5IDMKdHhuIEdyb3VwSW5kZXgKaW50Y18xIC8vIDEKLQpmcmFtZV9idXJ5IDAKZnJhbWVfZGlnIDAKZ3R4bnMgVHlwZUVudW0KaW50Y18xIC8vIHBheQo9PQphc3NlcnQKZnJhbWVfZGlnIDAKZnJhbWVfZGlnIDEKZnJhbWVfZGlnIDIKZnJhbWVfZGlnIDMKY2FsbHN1YiBwdXJjaGFzZXBvbGljeV8xCnJldHN1YgoKLy8gYXBwcm92ZV9jbGFpbV9jYXN0ZXIKYXBwcm92ZWNsYWltY2FzdGVyXzk6CnByb3RvIDAgMApjYWxsc3ViIGFwcHJvdmVjbGFpbV8yCnJldHN1YgoKLy8gcmVqZWN0X2NsYWltX2Nhc3RlcgpyZWplY3RjbGFpbWNhc3Rlcl8xMDoKcHJvdG8gMCAwCmNhbGxzdWIgcmVqZWN0Y2xhaW1fMwpyZXRzdWIKCi8vIGdldF9wb2xpY3lfY2FzdGVyCmdldHBvbGljeWNhc3Rlcl8xMToKcHJvdG8gMCAwCmJ5dGVjXzAgLy8gIiIKZHVwCnR4bmEgQXBwbGljYXRpb25BcmdzIDEKZnJhbWVfYnVyeSAxCmZyYW1lX2RpZyAxCmNhbGxzdWIgZ2V0cG9saWN5XzQKZnJhbWVfYnVyeSAwCnB1c2hieXRlcyAweDE1MWY3Yzc1IC8vIDB4MTUxZjdjNzUKZnJhbWVfZGlnIDAKY29uY2F0CmxvZwpyZXRzdWIKCi8vIHVwZGF0ZV9jb3ZlcmFnZV9hbW91bnRfY2FzdGVyCnVwZGF0ZWNvdmVyYWdlYW1vdW50Y2FzdGVyXzEyOgpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIHVwZGF0ZWNvdmVyYWdlYW1vdW50XzUKcmV0c3ViCgovLyB1cGRhdGVfZXhwaXJhdGlvbl90aW1lbGluZV9jYXN0ZXIKdXBkYXRlZXhwaXJhdGlvbnRpbWVsaW5lY2FzdGVyXzEzOgpwcm90byAwIDAKaW50Y18wIC8vIDAKdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQpidG9pCmZyYW1lX2J1cnkgMApmcmFtZV9kaWcgMApjYWxsc3ViIHVwZGF0ZWV4cGlyYXRpb250aW1lbGluZV82CnJldHN1Yg==",
     "clear": "I3ByYWdtYSB2ZXJzaW9uIDgKcHVzaGludCAwIC8vIDAKcmV0dXJu"
   },
   "state": {
     "global": {
-      "num_byte_slices": 0,
-      "num_uints": 0
+      "num_byte_slices": 1,
+      "num_uints": 2
     },
     "local": {
       "num_byte_slices": 0,
@@ -48,7 +125,23 @@ export const APP_SPEC: AppSpec = {
   },
   "schema": {
     "global": {
-      "declared": {},
+      "declared": {
+        "coverage_amount": {
+          "type": "uint64",
+          "key": "coverage_amount",
+          "descr": "This is the coverage amount"
+        },
+        "insurer": {
+          "type": "bytes",
+          "key": "insurer",
+          "descr": "The insurer address"
+        },
+        "policy_expiration_date": {
+          "type": "uint64",
+          "key": "policy_expiration_date",
+          "descr": "Expiration of policy. Default is set to yearly."
+        }
+      },
       "reserved": {}
     },
     "local": {
@@ -60,24 +153,99 @@ export const APP_SPEC: AppSpec = {
     "name": "go_insure",
     "methods": [
       {
-        "name": "hello",
+        "name": "bootstrap",
+        "args": [],
+        "returns": {
+          "type": "void"
+        },
+        "desc": "Set insurer address to the current app address."
+      },
+      {
+        "name": "purchase_policy",
         "args": [
           {
+            "type": "pay",
+            "name": "pay_txn"
+          },
+          {
             "type": "string",
-            "name": "name"
+            "name": "area"
+          },
+          {
+            "type": "string",
+            "name": "state"
+          },
+          {
+            "type": "string",
+            "name": "country"
           }
         ],
         "returns": {
-          "type": "string"
-        }
+          "type": "void"
+        },
+        "desc": "Buys a new property policy for an account."
+      },
+      {
+        "name": "approve_claim",
+        "args": [],
+        "returns": {
+          "type": "void"
+        },
+        "desc": "Approve policy claim"
+      },
+      {
+        "name": "reject_claim",
+        "args": [],
+        "returns": {
+          "type": "void"
+        },
+        "desc": "Reject a policy claim"
+      },
+      {
+        "name": "get_policy",
+        "args": [
+          {
+            "type": "address",
+            "name": "addr"
+          }
+        ],
+        "returns": {
+          "type": "(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)"
+        },
+        "desc": "Gets policy for a specific address"
+      },
+      {
+        "name": "update_coverage_amount",
+        "args": [
+          {
+            "type": "uint64",
+            "name": "amt"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        },
+        "desc": "Update policy coverage amount."
+      },
+      {
+        "name": "update_expiration_timeline",
+        "args": [
+          {
+            "type": "uint64",
+            "name": "expiration_timeline"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        },
+        "desc": "Update policy expiration timeline."
       }
     ],
-    "networks": {}
+    "networks": {},
+    "desc": "Insurance dApp"
   },
   "bare_call_config": {
-    "delete_application": "CALL",
-    "no_op": "CREATE",
-    "update_application": "CALL"
+    "no_op": "CREATE"
   }
 }
 
@@ -136,13 +304,74 @@ export type GoInsure = {
    * Maps method signatures / names to their argument and return types.
    */
   methods:
-    & Record<'hello(string)string' | 'hello', {
+    & Record<'bootstrap()void' | 'bootstrap', {
       argsObj: {
-        name: string
       }
-      argsTuple: [name: string]
-      returns: string
+      argsTuple: []
+      returns: void
     }>
+    & Record<'purchase_policy(pay,string,string,string)void' | 'purchase_policy', {
+      argsObj: {
+        pay_txn: TransactionToSign | Transaction | Promise<SendTransactionResult>
+        area: string
+        state: string
+        country: string
+      }
+      argsTuple: [pay_txn: TransactionToSign | Transaction | Promise<SendTransactionResult>, area: string, state: string, country: string]
+      returns: void
+    }>
+    & Record<'approve_claim()void' | 'approve_claim', {
+      argsObj: {
+      }
+      argsTuple: []
+      returns: void
+    }>
+    & Record<'reject_claim()void' | 'reject_claim', {
+      argsObj: {
+      }
+      argsTuple: []
+      returns: void
+    }>
+    & Record<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)' | 'get_policy', {
+      argsObj: {
+        addr: string
+      }
+      argsTuple: [addr: string]
+      returns: Policy
+    }>
+    & Record<'update_coverage_amount(uint64)void' | 'update_coverage_amount', {
+      argsObj: {
+        amt: bigint | number
+      }
+      argsTuple: [amt: bigint | number]
+      returns: void
+    }>
+    & Record<'update_expiration_timeline(uint64)void' | 'update_expiration_timeline', {
+      argsObj: {
+        expiration_timeline: bigint | number
+      }
+      argsTuple: [expiration_timeline: bigint | number]
+      returns: void
+    }>
+  /**
+   * Defines the shape of the global and local state of the application.
+   */
+  state: {
+    global: {
+      /**
+       * This is the coverage amount
+       */
+      'coverage_amount'?: IntegerState
+      /**
+       * The insurer address
+       */
+      'insurer'?: BinaryState
+      /**
+       * Expiration of policy. Default is set to yearly.
+       */
+      'policy_expiration_date'?: IntegerState
+    }
+  }
 }
 /**
  * Defines the possible abi call signatures
@@ -159,6 +388,38 @@ export type TypedCallParams<TSignature extends GoInsureSig | undefined> = {
  * Defines the arguments required for a bare call
  */
 export type BareCallArgs = Omit<RawAppCallArgs, keyof CoreAppCallArgs>
+/**
+ * Represents a Policy result as a struct
+ */
+export type Policy = {
+  customer_address: string
+  premium_amount: bigint
+  active_status: boolean
+  registration_date: bigint
+  expiration_date: bigint
+  claim_status: string
+  amount_claimed: bigint
+  area: string
+  state: string
+  country: string
+}
+/**
+ * Converts the tuple representation of a Policy to the struct representation
+ */
+export function Policy([customer_address, premium_amount, active_status, registration_date, expiration_date, claim_status, amount_claimed, area, state, country]: [string, bigint, boolean, bigint, bigint, string, bigint, string, string, string] ) {
+  return {
+    customer_address,
+    premium_amount,
+    active_status,
+    registration_date,
+    expiration_date,
+    claim_status,
+    amount_claimed,
+    area,
+    state,
+    country,
+  }
+}
 /**
  * Maps a method signature from the GoInsure smart contract to the method's arguments in either tuple of struct form
  */
@@ -178,24 +439,6 @@ export type GoInsureCreateCalls = (typeof GoInsureCallFactory)['create']
 export type GoInsureCreateCallParams =
   | (TypedCallParams<undefined> & (OnCompleteNoOp))
 /**
- * A factory for available 'update' calls
- */
-export type GoInsureUpdateCalls = (typeof GoInsureCallFactory)['update']
-/**
- * Defines supported update methods for this smart contract
- */
-export type GoInsureUpdateCallParams =
-  | TypedCallParams<undefined>
-/**
- * A factory for available 'delete' calls
- */
-export type GoInsureDeleteCalls = (typeof GoInsureCallFactory)['delete']
-/**
- * Defines supported delete methods for this smart contract
- */
-export type GoInsureDeleteCallParams =
-  | TypedCallParams<undefined>
-/**
  * Defines arguments required for the deploy method.
  */
 export type GoInsureDeployArgs = {
@@ -204,14 +447,6 @@ export type GoInsureDeployArgs = {
    * A delegate which takes a create call factory and returns the create call params for this smart contract
    */
   createCall?: (callFactory: GoInsureCreateCalls) => GoInsureCreateCallParams
-  /**
-   * A delegate which takes a update call factory and returns the update call params for this smart contract
-   */
-  updateCall?: (callFactory: GoInsureUpdateCalls) => GoInsureUpdateCallParams
-  /**
-   * A delegate which takes a delete call factory and returns the delete call params for this smart contract
-   */
-  deleteCall?: (callFactory: GoInsureDeleteCalls) => GoInsureDeleteCallParams
 }
 
 
@@ -241,58 +476,114 @@ export abstract class GoInsureCallFactory {
   }
 
   /**
-   * Gets available update call factories
-   */
-  static get update() {
-    return {
-      /**
-       * Constructs an update call for the go_insure smart contract using a bare call
-       *
-       * @param params Any parameters for the call
-       * @returns A TypedCallParams object for the call
-       */
-      bare(params: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs & AppClientCompilationParams = {}) {
-        return {
-          method: undefined,
-          methodArgs: undefined,
-          ...params,
-        }
-      },
-    }
-  }
-
-  /**
-   * Gets available delete call factories
-   */
-  static get delete() {
-    return {
-      /**
-       * Constructs a delete call for the go_insure smart contract using a bare call
-       *
-       * @param params Any parameters for the call
-       * @returns A TypedCallParams object for the call
-       */
-      bare(params: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs = {}) {
-        return {
-          method: undefined,
-          methodArgs: undefined,
-          ...params,
-        }
-      },
-    }
-  }
-
-  /**
-   * Constructs a no op call for the hello(string)string ABI method
+   * Constructs a no op call for the bootstrap()void ABI method
+   *
+   * Set insurer address to the current app address.
    *
    * @param args Any args for the contract call
    * @param params Any additional parameters for the call
    * @returns A TypedCallParams object for the call
    */
-  static hello(args: MethodArgs<'hello(string)string'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+  static bootstrap(args: MethodArgs<'bootstrap()void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
     return {
-      method: 'hello(string)string' as const,
-      methodArgs: Array.isArray(args) ? args : [args.name],
+      method: 'bootstrap()void' as const,
+      methodArgs: Array.isArray(args) ? args : [],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the purchase_policy(pay,string,string,string)void ABI method
+   *
+   * Buys a new property policy for an account.
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static purchasePolicy(args: MethodArgs<'purchase_policy(pay,string,string,string)void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'purchase_policy(pay,string,string,string)void' as const,
+      methodArgs: Array.isArray(args) ? args : [args.pay_txn, args.area, args.state, args.country],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the approve_claim()void ABI method
+   *
+   * Approve policy claim
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static approveClaim(args: MethodArgs<'approve_claim()void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'approve_claim()void' as const,
+      methodArgs: Array.isArray(args) ? args : [],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the reject_claim()void ABI method
+   *
+   * Reject a policy claim
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static rejectClaim(args: MethodArgs<'reject_claim()void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'reject_claim()void' as const,
+      methodArgs: Array.isArray(args) ? args : [],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string) ABI method
+   *
+   * Gets policy for a specific address
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static getPolicy(args: MethodArgs<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)' as const,
+      methodArgs: Array.isArray(args) ? args : [args.addr],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the update_coverage_amount(uint64)void ABI method
+   *
+   * Update policy coverage amount.
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static updateCoverageAmount(args: MethodArgs<'update_coverage_amount(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'update_coverage_amount(uint64)void' as const,
+      methodArgs: Array.isArray(args) ? args : [args.amt],
+      ...params,
+    }
+  }
+  /**
+   * Constructs a no op call for the update_expiration_timeline(uint64)void ABI method
+   *
+   * Update policy expiration timeline.
+   *
+   * @param args Any args for the contract call
+   * @param params Any additional parameters for the call
+   * @returns A TypedCallParams object for the call
+   */
+  static updateExpirationTimeline(args: MethodArgs<'update_expiration_timeline(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs) {
+    return {
+      method: 'update_expiration_timeline(uint64)void' as const,
+      methodArgs: Array.isArray(args) ? args : [args.expiration_timeline],
       ...params,
     }
   }
@@ -359,12 +650,8 @@ export class GoInsureClient {
    */
   public deploy(params: GoInsureDeployArgs & AppClientDeployCoreParams = {}): ReturnType<ApplicationClient['deploy']> {
     const createArgs = params.createCall?.(GoInsureCallFactory.create)
-    const updateArgs = params.updateCall?.(GoInsureCallFactory.update)
-    const deleteArgs = params.deleteCall?.(GoInsureCallFactory.delete)
     return this.appClient.deploy({
       ...params,
-      updateArgs,
-      deleteArgs,
       createArgs,
       createOnCompleteAction: createArgs?.onCompleteAction,
     })
@@ -389,42 +676,6 @@ export class GoInsureClient {
   }
 
   /**
-   * Gets available update methods
-   */
-  public get update() {
-    const $this = this
-    return {
-      /**
-       * Updates an existing instance of the go_insure smart contract using a bare call.
-       *
-       * @param args The arguments for the bare call
-       * @returns The update result
-       */
-      bare(args: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs = {}): Promise<AppCallTransactionResultOfType<undefined>> {
-        return $this.appClient.update(args) as unknown as Promise<AppCallTransactionResultOfType<undefined>>
-      },
-    }
-  }
-
-  /**
-   * Gets available delete methods
-   */
-  public get delete() {
-    const $this = this
-    return {
-      /**
-       * Deletes an existing instance of the go_insure smart contract using a bare call.
-       *
-       * @param args The arguments for the bare call
-       * @returns The delete result
-       */
-      bare(args: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs = {}): Promise<AppCallTransactionResultOfType<undefined>> {
-        return $this.appClient.delete(args) as unknown as Promise<AppCallTransactionResultOfType<undefined>>
-      },
-    }
-  }
-
-  /**
    * Makes a clear_state call to an existing instance of the go_insure smart contract.
    *
    * @param args The arguments for the bare call
@@ -435,14 +686,156 @@ export class GoInsureClient {
   }
 
   /**
-   * Calls the hello(string)string ABI method.
+   * Calls the bootstrap()void ABI method.
+   *
+   * Set insurer address to the current app address.
    *
    * @param args The arguments for the contract call
    * @param params Any additional parameters for the call
    * @returns The result of the call
    */
-  public hello(args: MethodArgs<'hello(string)string'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
-    return this.call(GoInsureCallFactory.hello(args, params))
+  public bootstrap(args: MethodArgs<'bootstrap()void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.bootstrap(args, params))
+  }
+
+  /**
+   * Calls the purchase_policy(pay,string,string,string)void ABI method.
+   *
+   * Buys a new property policy for an account.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public purchasePolicy(args: MethodArgs<'purchase_policy(pay,string,string,string)void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.purchasePolicy(args, params))
+  }
+
+  /**
+   * Calls the approve_claim()void ABI method.
+   *
+   * Approve policy claim
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public approveClaim(args: MethodArgs<'approve_claim()void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.approveClaim(args, params))
+  }
+
+  /**
+   * Calls the reject_claim()void ABI method.
+   *
+   * Reject a policy claim
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public rejectClaim(args: MethodArgs<'reject_claim()void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.rejectClaim(args, params))
+  }
+
+  /**
+   * Calls the get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string) ABI method.
+   *
+   * Gets policy for a specific address
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public getPolicy(args: MethodArgs<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.getPolicy(args, params), Policy)
+  }
+
+  /**
+   * Calls the update_coverage_amount(uint64)void ABI method.
+   *
+   * Update policy coverage amount.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public updateCoverageAmount(args: MethodArgs<'update_coverage_amount(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.updateCoverageAmount(args, params))
+  }
+
+  /**
+   * Calls the update_expiration_timeline(uint64)void ABI method.
+   *
+   * Update policy expiration timeline.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The result of the call
+   */
+  public updateExpirationTimeline(args: MethodArgs<'update_expiration_timeline(uint64)void'>, params: AppClientCallCoreParams & CoreAppCallArgs = {}) {
+    return this.call(GoInsureCallFactory.updateExpirationTimeline(args, params))
+  }
+
+  /**
+   * Extracts a binary state value out of an AppState dictionary
+   *
+   * @param state The state dictionary containing the state value
+   * @param key The key of the state value
+   * @returns A BinaryState instance containing the state value, or undefined if the key was not found
+   */
+  private static getBinaryState(state: AppState, key: string): BinaryState | undefined {
+    const value = state[key]
+    if (!value) return undefined
+    if (!('valueRaw' in value))
+      throw new Error(`Failed to parse state value for ${key}; received an int when expected a byte array`)
+    return {
+      asString(): string {
+        return value.value
+      },
+      asByteArray(): Uint8Array {
+        return value.valueRaw
+      }
+    }
+  }
+
+  /**
+   * Extracts a integer state value out of an AppState dictionary
+   *
+   * @param state The state dictionary containing the state value
+   * @param key The key of the state value
+   * @returns An IntegerState instance containing the state value, or undefined if the key was not found
+   */
+  private static getIntegerState(state: AppState, key: string): IntegerState | undefined {
+    const value = state[key]
+    if (!value) return undefined
+    if ('valueRaw' in value)
+      throw new Error(`Failed to parse state value for ${key}; received a byte array when expected a number`)
+    return {
+      asBigInt() {
+        return typeof value.value === 'bigint' ? value.value : BigInt(value.value)
+      },
+      asNumber(): number {
+        return typeof value.value === 'bigint' ? Number(value.value) : value.value
+      },
+    }
+  }
+
+  /**
+   * Returns the smart contract's global state wrapped in a strongly typed accessor with options to format the stored value
+   */
+  public async getGlobalState(): Promise<GoInsure['state']['global']> {
+    const state = await this.appClient.getGlobalState()
+    return {
+      get coverage_amount() {
+        return GoInsureClient.getIntegerState(state, 'coverage_amount')
+      },
+      get insurer() {
+        return GoInsureClient.getBinaryState(state, 'insurer')
+      },
+      get policy_expiration_date() {
+        return GoInsureClient.getIntegerState(state, 'policy_expiration_date')
+      },
+    }
   }
 
   public compose(): GoInsureComposer {
@@ -451,30 +844,40 @@ export class GoInsureClient {
     let promiseChain:Promise<unknown> = Promise.resolve()
     const resultMappers: Array<undefined | ((x: any) => any)> = []
     return {
-      hello(args: MethodArgs<'hello(string)string'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
-        promiseChain = promiseChain.then(() => client.hello(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+      bootstrap(args: MethodArgs<'bootstrap()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.bootstrap(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
         resultMappers.push(undefined)
         return this
       },
-      get update() {
-        const $this = this
-        return {
-          bare(args?: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs) {
-            promiseChain = promiseChain.then(() => client.update.bare({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
-            resultMappers.push(undefined)
-            return $this
-          },
-        }
+      purchasePolicy(args: MethodArgs<'purchase_policy(pay,string,string,string)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.purchasePolicy(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(undefined)
+        return this
       },
-      get delete() {
-        const $this = this
-        return {
-          bare(args?: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs) {
-            promiseChain = promiseChain.then(() => client.delete.bare({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
-            resultMappers.push(undefined)
-            return $this
-          },
-        }
+      approveClaim(args: MethodArgs<'approve_claim()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.approveClaim(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(undefined)
+        return this
+      },
+      rejectClaim(args: MethodArgs<'reject_claim()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.rejectClaim(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(undefined)
+        return this
+      },
+      getPolicy(args: MethodArgs<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.getPolicy(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(Policy)
+        return this
+      },
+      updateCoverageAmount(args: MethodArgs<'update_coverage_amount(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.updateCoverageAmount(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(undefined)
+        return this
+      },
+      updateExpirationTimeline(args: MethodArgs<'update_expiration_timeline(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs) {
+        promiseChain = promiseChain.then(() => client.updateExpirationTimeline(args, {...params, sendParams: {...params?.sendParams, skipSending: true, atc}}))
+        resultMappers.push(undefined)
+        return this
       },
       clearState(args?: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs) {
         promiseChain = promiseChain.then(() => client.clearState({...args, sendParams: {...args?.sendParams, skipSending: true, atc}}))
@@ -502,39 +905,81 @@ export class GoInsureClient {
 }
 export type GoInsureComposer<TReturns extends [...any[]] = []> = {
   /**
-   * Calls the hello(string)string ABI method.
+   * Calls the bootstrap()void ABI method.
+   *
+   * Set insurer address to the current app address.
    *
    * @param args The arguments for the contract call
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  hello(args: MethodArgs<'hello(string)string'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'hello(string)string'>]>
+  bootstrap(args: MethodArgs<'bootstrap()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'bootstrap()void'>]>
 
   /**
-   * Gets available update methods
+   * Calls the purchase_policy(pay,string,string,string)void ABI method.
+   *
+   * Buys a new property policy for an account.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  readonly update: {
-    /**
-     * Updates an existing instance of the go_insure smart contract using a bare call.
-     *
-     * @param args The arguments for the bare call
-     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
-     */
-    bare(args?: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, undefined]>
-  }
+  purchasePolicy(args: MethodArgs<'purchase_policy(pay,string,string,string)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'purchase_policy(pay,string,string,string)void'>]>
 
   /**
-   * Gets available delete methods
+   * Calls the approve_claim()void ABI method.
+   *
+   * Approve policy claim
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  readonly delete: {
-    /**
-     * Deletes an existing instance of the go_insure smart contract using a bare call.
-     *
-     * @param args The arguments for the bare call
-     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
-     */
-    bare(args?: BareCallArgs & AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, undefined]>
-  }
+  approveClaim(args: MethodArgs<'approve_claim()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'approve_claim()void'>]>
+
+  /**
+   * Calls the reject_claim()void ABI method.
+   *
+   * Reject a policy claim
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+   */
+  rejectClaim(args: MethodArgs<'reject_claim()void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'reject_claim()void'>]>
+
+  /**
+   * Calls the get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string) ABI method.
+   *
+   * Gets policy for a specific address
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+   */
+  getPolicy(args: MethodArgs<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'get_policy(address)(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)'>]>
+
+  /**
+   * Calls the update_coverage_amount(uint64)void ABI method.
+   *
+   * Update policy coverage amount.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+   */
+  updateCoverageAmount(args: MethodArgs<'update_coverage_amount(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'update_coverage_amount(uint64)void'>]>
+
+  /**
+   * Calls the update_expiration_timeline(uint64)void ABI method.
+   *
+   * Update policy expiration timeline.
+   *
+   * @param args The arguments for the contract call
+   * @param params Any additional parameters for the call
+   * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+   */
+  updateExpirationTimeline(args: MethodArgs<'update_expiration_timeline(uint64)void'>, params?: AppClientCallCoreParams & CoreAppCallArgs): GoInsureComposer<[...TReturns, MethodReturn<'update_expiration_timeline(uint64)void'>]>
 
   /**
    * Makes a clear_state call to an existing instance of the go_insure smart contract.
