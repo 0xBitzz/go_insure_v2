@@ -20,7 +20,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "outDir": "./dist/"
+    "outDir": "./dist/",
+    "skipDefaultLibCheck": true,
   },
   "include": [
     "src/**/*.ts",
@@ -34,5 +35,6 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+
 }

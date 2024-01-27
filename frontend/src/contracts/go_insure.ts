@@ -5,25 +5,28 @@
  * requires: @algorandfoundation/algokit-utils: ^2
  */
 import * as algokit from '@algorandfoundation/algokit-utils'
-import {
+import type {
+  ABIAppCallArg,
   AppCallTransactionResult,
   AppCallTransactionResultOfType,
+  AppCompilationResult,
+  AppReference,
+  AppState,
   CoreAppCallArgs,
   RawAppCallArgs,
-  AppState,
   TealTemplateParams,
-  ABIAppCallArg,
 } from '@algorandfoundation/algokit-utils/types/app'
-import {
+import type {
   AppClientCallCoreParams,
   AppClientCompilationParams,
   AppClientDeployCoreParams,
   AppDetails,
   ApplicationClient,
 } from '@algorandfoundation/algokit-utils/types/app-client'
-import { AppSpec } from '@algorandfoundation/algokit-utils/types/app-spec'
-import { SendTransactionResult, TransactionToSign, SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
-import { Algodv2, OnApplicationComplete, Transaction, TransactionWithSigner, AtomicTransactionComposer } from 'algosdk'
+import type { AppSpec } from '@algorandfoundation/algokit-utils/types/app-spec'
+import type { SendTransactionResult, TransactionToSign, SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
+import type { ABIResult, TransactionWithSigner } from 'algosdk'
+import { Algodv2, OnApplicationComplete, Transaction, AtomicTransactionComposer, modelsv2 } from 'algosdk'
 export const APP_SPEC: AppSpec = {
   "hints": {
     "bootstrap()void": {
@@ -295,6 +298,9 @@ export type BinaryState = {
    */
   asString(): string
 }
+
+export type AppCreateCallTransactionResult = AppCallTransactionResult & Partial<AppCompilationResult> & AppReference
+export type AppUpdateCallTransactionResult = AppCallTransactionResult & Partial<AppCompilationResult>
 
 /**
  * Defines the types of available calls and state of the GoInsure smart contract.
@@ -621,14 +627,14 @@ export class GoInsureClient {
    * @param returnValueFormatter An optional delegate to format the return value if required
    * @returns The smart contract response with an updated return value
    */
-  protected mapReturnValue<TReturn>(result: AppCallTransactionResult, returnValueFormatter?: (value: any) => TReturn): AppCallTransactionResultOfType<TReturn> {
+  protected mapReturnValue<TReturn, TResult extends AppCallTransactionResult = AppCallTransactionResult>(result: AppCallTransactionResult, returnValueFormatter?: (value: any) => TReturn): AppCallTransactionResultOfType<TReturn> & TResult {
     if(result.return?.decodeError) {
       throw result.return.decodeError
     }
     const returnValue = result.return?.returnValue !== undefined && returnValueFormatter !== undefined
       ? returnValueFormatter(result.return.returnValue)
       : result.return?.returnValue as TReturn | undefined
-      return { ...result, return: returnValue }
+      return { ...result, return: returnValue } as AppCallTransactionResultOfType<TReturn> & TResult
   }
 
   /**
@@ -669,8 +675,8 @@ export class GoInsureClient {
        * @param args The arguments for the bare call
        * @returns The create result
        */
-      bare(args: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs & (OnCompleteNoOp) = {}): Promise<AppCallTransactionResultOfType<undefined>> {
-        return $this.appClient.create(args) as unknown as Promise<AppCallTransactionResultOfType<undefined>>
+      async bare(args: BareCallArgs & AppClientCallCoreParams & AppClientCompilationParams & CoreAppCallArgs & (OnCompleteNoOp) = {}) {
+        return $this.mapReturnValue<undefined, AppCreateCallTransactionResult>(await $this.appClient.create(args))
       },
     }
   }
@@ -892,6 +898,14 @@ export class GoInsureClient {
         await promiseChain
         return atc
       },
+      async simulate(options?: SimulateOptions) {
+        await promiseChain
+        const result = await atc.simulate(client.algod, new modelsv2.SimulateRequest({ txnGroups: [], ...options }))
+        return {
+          ...result,
+          returns: result.methodResults?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i]!(val.returnValue) : val.returnValue)
+        }
+      },
       async execute() {
         await promiseChain
         const result = await algokit.sendAtomicTransactionComposer({ atc, sendParams: {} }, client.algod)
@@ -1001,9 +1015,19 @@ export type GoInsureComposer<TReturns extends [...any[]] = []> = {
    */
   atc(): Promise<AtomicTransactionComposer>
   /**
-   * Executes the transaction group and returns an array of results
+   * Simulates the transaction group and returns the result
+   */
+  simulate(options?: SimulateOptions): Promise<GoInsureComposerSimulateResult<TReturns>>
+  /**
+   * Executes the transaction group and returns the results
    */
   execute(): Promise<GoInsureComposerResults<TReturns>>
+}
+export type SimulateOptions = Omit<ConstructorParameters<typeof modelsv2.SimulateRequest>[0], 'txnGroups'>
+export type GoInsureComposerSimulateResult<TReturns extends [...any[]]> = {
+  returns: TReturns
+  methodResults: ABIResult[]
+  simulateResponse: modelsv2.SimulateResponse
 }
 export type GoInsureComposerResults<TReturns extends [...any[]]> = {
   returns: TReturns

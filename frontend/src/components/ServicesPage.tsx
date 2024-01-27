@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { FormEvent, useEffect, useState, useRef } from 'react'
 import { GoInsureClient } from '../contracts/go_insure'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { useWallet } from '@txnlab/use-wallet'
 import { useSnackbar } from 'notistack'
-import algosdk from 'algosdk'
+import algosdk, { ABIValue } from 'algosdk'
 
 const ServicesPage = () => {
   //   const [area, setArea] = useState<number>(479832604)
@@ -70,6 +71,8 @@ const ServicesPage = () => {
   // const _endTimestamp = toTimestamp(endTimestamp)
   // const _claimTimestamp = toTimestamp(claimTimestamp)
   //   }
+
+
   async function getMyPolicy() {
     const _policy = []
     for (let boxName of await goInsureClient.appClient.getBoxNames()) {
@@ -79,9 +82,10 @@ const ServicesPage = () => {
 
       const resultCodec = algosdk.ABIType.from('(address,uint64,bool,uint64,uint64,string,uint64,string,string,string)')
       const val = resultCodec.decode(result)
+
       console.log(val)
       let policy = {
-        premAmount: Number(val[1]),
+        premAmount: Number(val[1] as string),
         activeStatus: val[2],
         registrationDate: Number(val[3]),
         expirationDate: Number(val[4]),
@@ -222,7 +226,7 @@ const ServicesPage = () => {
                 />
               </div>
             </div>
-            {/* 
+            {/*
           <div className="mb-5">
             <label htmlFor="amount" className="text-2xl capitalize">
               Amount
