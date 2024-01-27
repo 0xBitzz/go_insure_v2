@@ -27,6 +27,7 @@ const ServicesPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const sender = { signer, addr: activeAddress! }
 
+  
   const goInsureClient = new GoInsureClient(
     {
       resolveBy: 'id',
