@@ -1,4 +1,3 @@
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -8,11 +7,9 @@ import { store } from './services/store/store'
 import './styles/main.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-
-    <Provider store={store}>
-      <Router>
-        <App />
-      </Router>
-    </Provider>
-
+  <Provider store={store}>
+    <Router>
+      <App />
+    </Router>
+  </Provider>,
 )
